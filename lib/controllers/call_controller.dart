@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:ui';
-import 'package:flutter_audio_manager_plus/flutter_audio_manager_plus.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart' as webrtc;
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:get/get.dart';
@@ -19,7 +18,6 @@ class CallController extends GetxController {
 
   late RTCVideoRenderer localRenderer;
   MediaStream? localStream;
-  final speakerOn = true.obs;
 
   bool started = false;
   Timer? _timer;
@@ -47,14 +45,11 @@ Future<void> _initCamera() async {
   }
 }
 
-  Future<void> toggleSpeaker() async {
-    speakerOn.toggle();
-      await FlutterAudioManagerPlus.changeToSpeaker();
-    
-  }
+
 
   void start() {
     started = true;
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       seconds.value++;
     });
@@ -62,8 +57,15 @@ Future<void> _initCamera() async {
 
   void stop() {
     _timer?.cancel();
-    localStream?.dispose();
+    // localStream?.dispose();
     localRenderer.dispose();
+
+    localRenderer = RTCVideoRenderer();
+    localRenderer.initialize();
+    if (localStream != null) {
+      localRenderer.srcObject = localStream;
+    }
+
     seconds.value = 0;
     minimized.value = false;
     expanded.value = true;
@@ -83,12 +85,27 @@ Future<void> _initCamera() async {
   void minimize() {
     minimized.value = true;
     expanded.value = false;
-    Get.back();
   }
 
   void expand() {
     minimized.value = false;
     expanded.value = true;
 
+  }
+  void endCall() {
+    _timer?.cancel();
+    _timer = null;
+
+    localStream?.getTracks().forEach((t) => t.stop());
+    localStream?.dispose();
+    localStream = null;
+
+    localRenderer.srcObject = null;
+    localRenderer.dispose();
+
+    seconds.value = 0;
+    minimized.value = false;
+    expanded.value = true;
+    started = false;
   }
 }

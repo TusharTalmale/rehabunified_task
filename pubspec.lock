@@ -182,14 +182,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_audio_manager_plus:
-    dependency: "direct main"
-    description:
-      name: flutter_audio_manager_plus
-      sha256: a360dfa5b4bd47bafa3be7ab31683b46d6c38be9d845d006086bf6002a349760
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.1"
   flutter_lints:
     dependency: "direct dev"
     description:

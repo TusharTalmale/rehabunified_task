@@ -20,6 +20,8 @@ class _VideoCallScreenState extends State<VideoCallScreen>
   @override
   void initState() {
     super.initState();
+    callController.sessionId = Get.arguments;
+    callController.start();
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -39,7 +41,7 @@ class _VideoCallScreenState extends State<VideoCallScreen>
   @override
   Widget build(BuildContext context) {
     final String sessionId = Get.arguments;
-    callController.sessionId = sessionId ;
+    callController.sessionId = sessionId;
 
     final session = sessionController.allSessions.firstWhere(
       (s) => s.sessionId == sessionId,
@@ -148,7 +150,8 @@ class _VideoCallScreenState extends State<VideoCallScreen>
           ),
 
           // 👀 Self video preview
-          if (callController.camOn.value)
+          if (callController.camOn.value &&
+              callController.localRenderer.srcObject != null)
             Positioned(
               right: 12,
               top: 12,
@@ -185,14 +188,6 @@ class _VideoCallScreenState extends State<VideoCallScreen>
             onTap: callController.toggleMic,
           ),
           const SizedBox(width: 20),
-          _iconButton(
-            icon:
-                callController.speakerOn.value
-                    ? Icons.volume_up
-                    : Icons.hearing,
-            active: callController.speakerOn.value,
-            onTap: callController.toggleSpeaker,
-          ),
 
           const SizedBox(width: 20),
           _iconButton(
@@ -254,9 +249,9 @@ class _VideoCallScreenState extends State<VideoCallScreen>
       height: 48,
       child: OutlinedButton(
         onPressed: () async {
-          callController.stop();
           await sessionController.leave(sessionId);
-          Get.back();
+                    Get.back();
+
         },
         style: OutlinedButton.styleFrom(
           side: const BorderSide(color: Colors.red),

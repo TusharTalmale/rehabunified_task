@@ -19,7 +19,9 @@ void main() async {
 
 
   runApp(
-    DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
+    // DevicePreview(enabled: !kReleaseMode, builder: (context) =>
+     const MyApp()
+    //  ),
   );
 }
 
@@ -30,8 +32,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       useInheritedMediaQuery: true,
-      locale: DevicePreview.locale(context),
-      builder: DevicePreview.appBuilder,
+      // locale: DevicePreview.locale(context),
+      // builder: DevicePreview.appBuilder,
       debugShowCheckedModeBanner: false,
       title: 'Session Join App',
 
