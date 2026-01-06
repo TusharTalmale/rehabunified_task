@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "986955898654",
+    "project_id": "rehabunified-task-1234",
+    "storage_bucket": "rehabunified-task-1234.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:986955898654:android:83b94fdbae660c6c2c730f",
+        "android_client_info": {
+          "package_name": "com.example.rehabunified_task"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxJ7lYgSUJBUW325BHxiaQbdO4WcxxKTI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
