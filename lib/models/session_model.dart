@@ -87,6 +87,9 @@ class SessionModel {
     return {'durationSeconds': seconds};
   }
 
+  bool isSubscribed(String uid) => subscribers.contains(uid);
+  bool isJoined(String uid) => joinedUsers.contains(uid);
+
   /// 🔹 CopyWith for Optimistic UI
   SessionModel copyWith({
     String? sessionId,

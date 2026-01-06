@@ -29,6 +29,7 @@ class SessionController extends GetxController {
 
   Timer? _searchDebounce;
   StreamSubscription? _sessionSub;
+String get currentUserId => _service.currentUserId;
 
   // ========================
   // Lifecycle

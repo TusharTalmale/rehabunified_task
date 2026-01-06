@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 
 class CallController extends GetxController {
   final seconds = 0.obs;
+  var sessionId = '';
 
   final minimized = false.obs;
   final expanded = true.obs;
@@ -82,10 +83,12 @@ Future<void> _initCamera() async {
   void minimize() {
     minimized.value = true;
     expanded.value = false;
+    Get.back();
   }
 
   void expand() {
     minimized.value = false;
     expanded.value = true;
+
   }
 }

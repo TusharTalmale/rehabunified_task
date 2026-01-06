@@ -7,6 +7,8 @@ class SessionService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final AuthService _authService = AuthService();
   static const int pageSize = 10;
+  String get currentUserId => _authService.uid;
+
   // DocumentSnapshot? _lastDoc;
   final Map<String, DocumentSnapshot?> _lastDocs = {
     'all': null,
@@ -14,6 +16,7 @@ class SessionService {
     'ongoing': null,
     'completed': null,
   };
+
 
   Future<List<SessionModel>> fetchByStatus({
     required String status,

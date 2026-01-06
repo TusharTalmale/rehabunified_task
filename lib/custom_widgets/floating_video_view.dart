@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:rehabunified_task/screens/video_call_screen.dart';
 import '../controllers/call_controller.dart';
 
 class FloatingVideoView extends StatelessWidget {
   FloatingVideoView({super.key, required this.onClose});
 
   final VoidCallback onClose;
-  final CallController controller = Get.find();
+  CallController controller = Get.find<CallController>();
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +53,10 @@ class FloatingVideoView extends StatelessWidget {
                   child: GestureDetector(
                     onTap: () {
                       controller.expand();
-                      Get.to(() => VideoCallScreen());
+                      Get.toNamed(
+                        '/video-call',
+                        arguments: controller.sessionId,
+                      );
                     },
                     child: const Icon(
                       Icons.open_in_full,

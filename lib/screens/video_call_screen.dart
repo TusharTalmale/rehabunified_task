@@ -14,8 +14,8 @@ class VideoCallScreen extends StatefulWidget {
 
 class _VideoCallScreenState extends State<VideoCallScreen>
     with WidgetsBindingObserver {
-  final CallController callController = Get.find();
-  final SessionController sessionController = Get.find();
+  final CallController callController = Get.find<CallController>();
+  final SessionController sessionController = Get.find<SessionController>();
 
   @override
   void initState() {
@@ -39,6 +39,8 @@ class _VideoCallScreenState extends State<VideoCallScreen>
   @override
   Widget build(BuildContext context) {
     final String sessionId = Get.arguments;
+    callController.sessionId = sessionId ;
+
     final session = sessionController.allSessions.firstWhere(
       (s) => s.sessionId == sessionId,
       orElse:

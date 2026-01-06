@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:intl/intl.dart';
 import 'package:rehabunified_task/constants/session_status.dart';
 import 'package:rehabunified_task/controllers/session_controller.dart';
 import 'package:rehabunified_task/custom_widgets/highlight_text.dart';
@@ -32,6 +33,8 @@ class SessionCard extends StatelessWidget {
           children: [
             _header(),
             const SizedBox(height: 6),
+            _dateTimeRow(),
+            const SizedBox(height: 6),
             _description(),
             const SizedBox(height: 10),
             _countsRow(),
@@ -62,7 +65,24 @@ class SessionCard extends StatelessWidget {
       ],
     );
   }
+Widget _dateTimeRow() {
+  final dateFormat = DateFormat('dd MMM yyyy');
+  final timeFormat = DateFormat('hh:mm a');
 
+  return Row(
+    children: [
+      const Icon(Icons.schedule, size: 14, color: Colors.grey),
+      const SizedBox(width: 6),
+      Text(
+        '${dateFormat.format(session.startTime)} • ${timeFormat.format(session.startTime)}',
+        style: TextStyle(
+          fontSize: 13,
+          color: Colors.grey.shade600,
+        ),
+      ),
+    ],
+  );
+}
   Widget _description() {
     return Text(
       session.description,
@@ -128,23 +148,43 @@ class SessionCard extends StatelessWidget {
     );
   }
 
-  /// 🔹 Actions based on status
   Widget _buildActions(BuildContext context) {
+    final uid = controller.currentUserId;
+
+    // ---------------- UPCOMING ----------------
     if (session.status == SessionStatus.upcoming) {
-      return _primaryButton(
+      if (session.isSubscribed(uid)) {
+        return _actionButton(
+          text: 'Unsubscribe',
+          onTap: () => controller.unsubscribe(session),
+          isPrimary: false,
+          isDanger: true,
+        );
+      }
+
+      return _actionButton(
         text: 'Subscribe',
         onTap: () => controller.subscribe(session),
       );
     }
 
+    // ---------------- ONGOING ----------------
     if (session.status == SessionStatus.ongoing) {
-      return _primaryButton(
-        text: 'Join Session',
+      if (session.isJoined(uid)) {
+        return _actionButton(
+          text: 'Leave Session',
+          onTap: () => controller.leave(session.sessionId),
+          isPrimary: false,
+          isDanger: true,
+        );
+      }
+
+      return _actionButton(
+        text: 'Join Live',
         onTap: () {
           PermissionSheet.show(
             onGranted: () async {
               await controller.join(session);
-
               Get.toNamed('/video-call', arguments: session.sessionId);
             },
           );
@@ -152,43 +192,76 @@ class SessionCard extends StatelessWidget {
       );
     }
 
-    if (session.status == SessionStatus.completed) {
-      return _secondaryButton();
-    }
-
-    return Container();
+    // ---------------- COMPLETED ----------------
+    return _completedLabel();
   }
 
-  Widget _secondaryButton() {
+  Widget _completedLabel() {
     return const Align(
       alignment: Alignment.centerRight,
-      child: Text('Session Completed', style: TextStyle(color: Colors.grey)),
-    );
-  }
-
-  Widget _primaryButton({required String text, required VoidCallback onTap}) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: SizedBox(
-        height: 40,
-        child: OutlinedButton(
-          onPressed: onTap,
-          style: OutlinedButton.styleFrom(
-            side: BorderSide(color: Colors.blue.shade400),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: Text(
-            text,
-            style: const TextStyle(fontWeight: FontWeight.w500),
-          ),
+      child: Text(
+        'Session Completed',
+        style: TextStyle(
+          color: Colors.grey,
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );
   }
-}
 
+  Widget _actionButton({
+    required String text,
+    required VoidCallback onTap,
+    bool isPrimary = true,
+    bool isDanger = false,
+  }) {
+    final Color color = isDanger ? Colors.red : Colors.blue;
+
+    return Align(
+      alignment: Alignment.centerRight,
+      child: SizedBox(
+        height: 42,
+        child:
+            isPrimary
+                ? ElevatedButton(
+                  onPressed: onTap,
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: color,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: Text(
+                    text,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                )
+                : OutlinedButton(
+                  onPressed: onTap,
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: color),
+                    foregroundColor: color,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: Text(
+                    text,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+      ),
+    );
+  }
+}
 class PermissionSheet {
   static void show({required Future<void> Function() onGranted}) {
     Get.bottomSheet(
@@ -203,35 +276,51 @@ class PermissionSheet {
           children: [
             const Icon(Icons.videocam, size: 48, color: Colors.blue),
             const SizedBox(height: 12),
+
             const Text(
               'Camera & Microphone Required',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             const SizedBox(height: 8),
+
             const Text(
               'To join this live session, we need access to your camera and microphone.',
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 20),
+
             Row(
               children: [
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => Get.back(),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.grey),
+                      foregroundColor: Colors.grey,
+                    ),
                     child: const Text('Cancel'),
                   ),
                 ),
                 const SizedBox(width: 12),
+
                 Expanded(
-                  child: ElevatedButton(
+                  child: OutlinedButton(
                     onPressed: () async {
                       Get.back();
-                      final granted = await PermissionUtils.checkCameraAndMic();
+                      final granted =
+                          await PermissionUtils.checkCameraAndMic();
                       if (granted) {
                         await onGranted();
                       }
                     },
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.blue),
+                      foregroundColor: Colors.blue,
+                    ),
                     child: const Text('Allow'),
                   ),
                 ),
@@ -242,4 +331,7 @@ class PermissionSheet {
       ),
     );
   }
+
+
+
 }

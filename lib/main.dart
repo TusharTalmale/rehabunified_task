@@ -3,7 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:rehabunified_task/controllers/call_controller.dart';
 import 'package:rehabunified_task/firebase_options.dart';
+import 'package:rehabunified_task/services/session_service.dart';
 
 import 'screens/appointments_screen.dart';
 import 'screens/video_call_screen.dart';
@@ -14,6 +16,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   await AuthService().ensureAnonymousLogin();
+
 
   runApp(
     DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
@@ -35,7 +38,6 @@ class MyApp extends StatelessWidget {
       // Initial screen
       initialRoute: '/',
 
-      // Routes defined inline (NO separate routes file)
       getPages: [
         GetPage(name: '/', page: () => AppointmentsScreen()),
         GetPage(name: '/video-call', page: () => VideoCallScreen()),
