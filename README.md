@@ -1,277 +1,196 @@
-📱 Session Join App (Flutter + GetX + Firebase)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>RehabUnified – Live Session & Video Calling App</title>
+</head>
+<body>
 
-A production-ready Flutter application that allows users to view, subscribe to, and join live sessions using Firebase Firestore, GetX state management, and Anonymous Authentication.
+<h1>📱  Live Session & Video Calling App</h1>
 
-This app is designed as a participant / attendee-only application.
-Sessions are assumed to be pre-created externally (e.g., admin or backend system).
+<p>
+  <strong>RehabUnified</strong> is a Flutter-based mobile application designed for managing and attending
+  live rehabilitation sessions with real-time video calling. The app delivers a smooth and modern
+  experience similar to platforms like Google Meet or YouTube, including Picture-in-Picture support
+  and floating mini video playback.
+</p>
 
-🚀 Features
-✅ Core Features
+<hr />
 
-View Upcoming & Ongoing Sessions
+<h2>🚀 Features</h2>
 
-Subscribe to upcoming sessions
+<h3>📅 Session Management</h3>
+<ul>
+  <li>Browse sessions categorized as <strong>Upcoming</strong>, <strong>Live</strong>, and <strong>Completed</strong></li>
+  <li>Real-time search with highlighted text</li>
+  <li>Infinite scrolling with pagination</li>
+  <li>Skeleton loaders for better loading UX</li>
+  <li>Proper empty and error state handling</li>
+</ul>
 
-Join ongoing sessions
+<h3>🎥 Live Video Calling</h3>
+<ul>
+  <li>Real-time camera and microphone access</li>
+  <li>Self video preview inside the call screen</li>
+  <li>Mute / unmute microphone</li>
+  <li>Turn camera on / off during the call</li>
+  <li>Speaker ↔ earpiece audio routing</li>
+</ul>
 
-Camera & Microphone permission handling
+<h3>📱 Picture-in-Picture (PiP)</h3>
+<ul>
+  <li>YouTube-style floating mini video player</li>
+  <li>Draggable mini player overlay</li>
+  <li>Expand back to full-screen call</li>
+  <li>Continue call while navigating other screens</li>
+</ul>
 
-Mock video call UI
+<h3>🧠 Architecture & State Management</h3>
+<ul>
+  <li>GetX for state management and navigation</li>
+  <li>Clean separation of UI, controllers, and services</li>
+  <li>Reactive UI updates without unnecessary rebuilds</li>
+</ul>
 
-Real-time session stopwatch
+<hr />
 
-Session duration saved to Firestore
+<h2>🛠️ Tech Stack</h2>
 
-Anonymous user identification (no login UI)
+<table border="1" cellpadding="8" cellspacing="0">
+  <tr>
+    <th>Category</th>
+    <th>Technology</th>
+  </tr>
+  <tr>
+    <td>Framework</td>
+    <td>Flutter</td>
+  </tr>
+  <tr>
+    <td>State Management</td>
+    <td>GetX</td>
+  </tr>
+  <tr>
+    <td>Video & Audio</td>
+    <td>flutter_webrtc</td>
+  </tr>
+  <tr>
+    <td>Audio Routing</td>
+    <td>flutter_audio_manager_plus</td>
+  </tr>
+  <tr>
+    <td>Backend</td>
+    <td>Firebase </td>
+  </tr>
+  <tr>
+    <td>Platform</td>
+    <td>Android (Web partially supported)</td>
+  </tr>
+</table>
 
-🧱 Tech Stack
-Layer	Technology
-UI	Flutter
-State Management	GetX
-Backend	Firebase Firestore
-Authentication	Firebase Anonymous Auth
-Permissions	permission_handler
-Navigation	GetX routing (inline routes)
-🧠 Architectural Decisions
-1️⃣ Why GetX?
+<hr />
 
-Lightweight
+<h2>📦 Key Packages</h2>
 
-Reactive state management
+<pre>
+flutter_webrtc
+flutter_audio_manager_plus
+get
+firebase_core
+cloud_firestore
+</pre>
 
-Simple navigation
+<hr />
 
-Minimal boilerplate
+<h2>🧩 Project Structure</h2>
 
-Perfect for small–medium apps
-
-2️⃣ Why Anonymous Authentication?
-
-No login/signup UI required
-
-Each user still gets a unique UID
-
-Enables:
-
-Secure Firestore rules
-
-Session subscriptions
-
-Future push notifications
-
-Can be upgraded later to full auth (Google / Email)
-
-👉 Auth runs silently at app start.
-
-3️⃣ Why No Session Creation?
-
-This app is NOT a platform to create sessions.
-
-Responsibilities:
-
-❌ Creating / editing sessions
-
-❌ Ownership or admin control
-
-Focus:
-
-✅ Viewing sessions
-
-✅ Subscribing
-
-✅ Joining
-
-✅ Tracking duration
-
-This keeps the app simple, focused, and scalable.
-
-📁 Project Structure
+<pre>
 lib/
-├── main.dart
-│
-├── constants/
-│   ├── firestore_constants.dart
-│   ├── session_status.dart
-│   └── app_constants.dart
-│
-├── models/
-│   └── session_model.dart
-│
-├── services/
-│   ├── auth_service.dart
-│   └── session_service.dart
-│
-├── controllers/
-│   ├── session_controller.dart
-│   └── call_controller.dart
-│
-├── utils/
-│   └── permission_utils.dart
-│
-├── screens/
-│   ├── appointments_screen.dart
-│   └── video_call_screen.dart
-
-Folder Responsibilities
-
-models → Pure data structures
-
-services → Firebase & external logic
-
-controllers → Business logic & state
-
-screens → UI only
-
-utils → Reusable helpers
-
-constants → Single source of truth
-
-🗂️ Firestore Data Model
-Collection: sessions
-{
-  "title": "Knee Rehab Session",
-  "description": "Guided physiotherapy exercises",
-  "ownerName": "Dr. Sharma",
-  "status": "upcoming",
-  "startTime": "Timestamp",
-  "durationSeconds": 0,
-  "awaitingCount": 5,
-  "joinedCount": 0,
-  "subscribers": ["uid_1", "uid_2"]
-}
-
-Status Values
-
-upcoming
-
-ongoing
-
-completed
-
-🔁 Application Flow
-App Start
-
-Firebase initializes
-
-Anonymous authentication happens silently
-
-UID is stored by Firebase
-
-Appointments Screen
-
-Fetches sessions from Firestore
-
-Displays:
-
-Title
-
-Description
-
-Owner
-
-Awaiting / Joined counts
-
-Actions:
-
-Subscribe → adds UID to subscribers
-
-Join → checks permissions → updates Firestore → navigates
-
-Video Call Screen
-
-Mock video UI
-
-Stopwatch starts automatically
-
-Duration updates in Firestore on end
-
-User navigates back safely
-
-🔐 Permissions Handling
-
-Camera & Microphone permissions requested only when joining
-
-Handles:
-
-Granted
-
-Denied
-
-Permanently denied (opens app settings)
-
-This follows correct UX and platform guidelines.
-
-🔔 Notification Design (Planned)
-Current
-
-Real-time Firestore listeners
-
-In-app awareness when session becomes ongoing
-
-Future (No refactor required)
-
-Store FCM token per UID
-
-Cloud Function triggers notification when:
-
-status: upcoming → ongoing
-
-
-Notify all subscribers
-
-The data model is already notification-ready.
-
-🔒 Firestore Security Rules (Recommended)
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /sessions/{sessionId} {
-      allow read, update: if request.auth != null;
-    }
-  }
-}
-
-🧪 Error & State Handling
-
-Loading states handled via GetX
-
-Errors captured and displayed safely
-
-UI remains responsive
-
-📦 Dependencies
-get: ^4.6.6
-firebase_core: ^2.27.0
-firebase_auth: ^4.17.0
-cloud_firestore: ^4.15.0
-permission_handler: ^11.3.0
-
-🛠️ Future Enhancements
-
-Push notifications (FCM)
-
-Real video SDK (Agora / WebRTC)
-
-Session filters
-
-User profiles
-
-Analytics
-
-🧾 Key Takeaways
-
-Clean architecture
-
-No overengineering
-
-Production-ready patterns
-
-Easy to scale
-
-Task requirements fully satisfied
-
-👨‍💻 Author
-
-Tushar Talmale
-Flutter & Full-Stack Developer
-📍 India
+ ├── controllers/
+ │    ├── session_controller.dart
+ │    ├── call_controller.dart
+ ├── services/
+ │    ├── session_service.dart
+ ├── models/
+ │    ├── session_model.dart
+ ├── screens/
+ │    ├── appointments_screen.dart
+ │    ├── video_call_screen.dart
+ ├── custom_widgets/
+ │    ├── session_card.dart
+ │    ├── floating_video_view.dart
+ │    ├── highlight_text.dart
+ │    ├── session_card_skeleton.dart
+</pre>
+
+<hr />
+
+<h2>🎯 Project Highlights</h2>
+<ul>
+  <li>Implements real-world video calling concepts using WebRTC</li>
+  <li>Android Picture-in-Picture (PiP) support</li>
+  <li>Advanced audio routing (speaker / earpiece)</li>
+  <li>Optimized UI with debounced search</li>
+  <li>Production-ready UX patterns and error handling</li>
+</ul>
+
+<hr />
+
+<h2>▶️ How to Run</h2>
+
+<h3>Prerequisites</h3>
+<ul>
+  <li>Flutter SDK</li>
+  <li>Android Studio / Emulator</li>
+  <li>Physical Android device recommended</li>
+</ul>
+
+<h3>Steps</h3>
+
+<pre>
+flutter clean
+flutter pub get
+flutter run
+</pre>
+
+<p>
+  <strong>Note:</strong> Audio routing and Picture-in-Picture work only on Android/iOS.
+</p>
+
+<hr />
+
+<h2>🔐 Android Permissions</h2>
+
+<pre>
+&lt;uses-permission android:name="android.permission.CAMERA"/&gt;
+&lt;uses-permission android:name="android.permission.RECORD_AUDIO"/&gt;
+&lt;uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/&gt;
+</pre>
+
+<hr />
+
+<h2>📌 Future Enhancements</h2>
+<ul>
+  <li>Multi-user video calls</li>
+  <li>Remote peer streaming</li>
+  <li>Network quality indicators</li>
+  <li>Screen sharing</li>
+  <li>Call recording</li>
+</ul>
+
+<hr />
+
+<h2>👨‍💻 Author</h2>
+
+<p>
+  <strong>Tushar Talmale</strong><br />
+  Full Stack & Mobile Developer<br />
+  Flutter | Kotlin | Spring Boot | React | Docker<br />
+  📧 Email: tushartal2@gmail.com<br />
+
+  🔗 LinkedIn:
+  <a href="https://www.linkedin.com/in/tushartalmale" target="_blank">
+    https://www.linkedin.com/in/tushartalmale
+  </a>
+</p>
+
+<hr />
